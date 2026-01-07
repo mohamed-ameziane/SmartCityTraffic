@@ -1,0 +1,8 @@
+global:
+  scrape_interval: 2s # Récupération très rapide pour l'effet temps réel
+
+scrape_configs:
+  - job_name: 'traffic-simulator'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8080'] # Permet à Docker de voir votre appli Windows

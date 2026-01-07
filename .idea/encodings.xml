@@ -4,5 +4,6 @@
     <file url="file://$PROJECT_DIR$/traffic-consumer-hdfs/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/traffic-simulator/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/traffic-spark-processor/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/traffic-spark-processor/src/main/resources" charset="UTF-8" />
   </component>
 </project>

@@ -2,6 +2,7 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
@@ -16,7 +17,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="traffic-consumer-hdfs" options="-parameters" />
       <module name="traffic-simulator" options="-parameters" />
-      <module name="traffic-spark-processor" options="-parameters" />
+      <module name="traffic-spark-processor" options="" />
     </option>
   </component>
 </project>
