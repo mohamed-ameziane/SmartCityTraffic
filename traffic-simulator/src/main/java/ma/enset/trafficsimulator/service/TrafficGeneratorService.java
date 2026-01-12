@@ -15,7 +15,6 @@ public class TrafficGeneratorService {
     private final Random random = new Random();
     private final MeterRegistry meterRegistry;
 
-    // Map to hold persistent Gauge references
     private final java.util.Map<String, java.util.concurrent.atomic.AtomicInteger> speedGauges = new java.util.concurrent.ConcurrentHashMap<>();
     private final java.util.Map<String, java.util.concurrent.atomic.AtomicInteger> occupancyGauges = new java.util.concurrent.ConcurrentHashMap<>();
     private final java.util.Map<String, java.util.concurrent.atomic.AtomicInteger> vehicleGauges = new java.util.concurrent.ConcurrentHashMap<>();
@@ -39,21 +38,17 @@ public class TrafficGeneratorService {
         int avgSpeedInt;
         int occupancyRate;
 
-        // Logique de simulation
-        if (vehicleCount > 80) { // Congestion
+        if (vehicleCount > 80) {
             avgSpeedInt = 5 + random.nextInt(35);
             occupancyRate = 70 + random.nextInt(30);
-        } else { // Fluide
+        } else {
             avgSpeedInt = 50 + random.nextInt(70);
             occupancyRate = random.nextInt(50);
         }
 
-        // --- ENVOI VERS PROMETHEUS / GRAFANA ---
-        // Clé unique pour identifier la série temporelle
         String gaugeKey = sensorId + "-" + roadId + "-" + zone;
         Tags tags = Tags.of("roadId", roadId, "zone", zone, "roadType", roadType);
 
-        // Update Gauges safely
         speedGauges.computeIfAbsent(gaugeKey, k -> {
             java.util.concurrent.atomic.AtomicInteger gauge = new java.util.concurrent.atomic.AtomicInteger(0);
             meterRegistry.gauge("traffic_speed", tags, gauge);
@@ -71,7 +66,6 @@ public class TrafficGeneratorService {
             meterRegistry.gauge("traffic_vehicles", tags, gauge);
             return gauge;
         }).set(vehicleCount);
-        // ----------------------------------------
 
         return new TrafficEvent(
                 sensorId, roadId, roadType, zone,

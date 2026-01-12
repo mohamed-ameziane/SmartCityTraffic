@@ -37,7 +37,6 @@ public class HdfsService {
 
         buffer.add(event);
 
-        // Batch : On écrit dans HDFS tous les 10 messages reçus
         if (buffer.size() >= 10) {
             writeBufferToHdfs();
             buffer.clear();
@@ -46,37 +45,25 @@ public class HdfsService {
 
     private void writeBufferToHdfs() {
         try {
-            // --- MODIFICATION 1 : Le Hack Windows ---
-            // Empêche Hadoop de planter s'il ne trouve pas winutils.exe
             System.setProperty("hadoop.home.dir", "/");
-            // ---------------------------------------
 
-            // Configuration Hadoop
             Configuration conf = new Configuration();
             conf.set("fs.defaultFS", hdfsUri);
 
-            // --- MODIFICATION 2 : Compatibilité Docker ---
-            // Aide le client à résoudre les noms des conteneurs (namenode/datanode)
             conf.set("dfs.client.use.datanode.hostname", "true");
-            conf.set("dfs.replication", "1"); // Force la réplication à 1 pour la démo
-            // ---------------------------------------------
+            conf.set("dfs.replication", "1");
 
-            // Gestion de l'utilisateur HDFS (pour éviter les erreurs de permission "Permission denied")
             System.setProperty("HADOOP_USER_NAME", "root");
 
-            // On utilise URI pour forcer l'utilisation du système distribué
             FileSystem fs = FileSystem.get(new URI(hdfsUri), conf);
 
-            // Nom du fichier unique : traffic_DATE_UUID.json
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
             String fileName = "traffic_" + timestamp + "_" + UUID.randomUUID() + ".json";
             Path path = new Path(hdfsPath + fileName);
 
-            // Écriture du fichier
             try (FSDataOutputStream outputStream = fs.create(path);
-                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream))) {
+                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream))) {
 
-                // On écrit la liste entière en JSON
                 String jsonContent = objectMapper.writeValueAsString(buffer);
                 writer.write(jsonContent);
             }
